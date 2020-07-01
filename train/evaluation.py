@@ -5,7 +5,6 @@ import time
 import numpy as np
 import yaml
 from easydict import EasyDict
-from pyflann import FLANN
 from skimage.io import imread
 
 from network.wrapper import GIFTDescriptor
@@ -22,11 +21,12 @@ class Matcher:
         self.ratio_test=cfg['ratio_test']
         self.ratio=cfg['ratio']
         self.use_cuda=cfg['cuda']
-        self.flann=FLANN()
         if self.use_cuda:
             self.match_fn_1=lambda desc0,desc1: find_nearest_point_idx(desc1, desc0)
             self.match_fn_2=lambda desc0,desc1: find_first_and_second_nearest_point(desc1, desc0)
         else:
+            from pyflann import FLANN
+            self.flann=FLANN()
             self.match_fn_1=lambda desc0,desc1: self.flann.nn(desc1, desc0, 1, algorithm='linear')
             self.match_fn_2=lambda desc0,desc1: self.flann.nn(desc1, desc0, 2, algorithm='linear')
 

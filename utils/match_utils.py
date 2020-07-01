@@ -1,4 +1,3 @@
-from pyflann.index import FLANN
 import cv2
 
 from utils.base_utils import perspective_transform
@@ -10,6 +9,7 @@ def nn_match(feats_que, feats_ref, use_cuda=True):
     if use_cuda:
         idxs = find_nearest_point_idx(feats_ref, feats_que)
     else:
+        from pyflann.index import FLANN
         flann = FLANN()
         idxs, dists = flann.nn(feats_ref, feats_que, 1, algorithm='linear', trees=4)
     return idxs
